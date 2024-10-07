@@ -1,25 +1,15 @@
-import logo from './logo.svg';
-import './App.css';
+import React from 'react';
+import PersonList from './components/PersonList';
+import CreatePersonForm from './components/CreatePersonForm';
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+	return (
+		<div className="container mx-auto p-6">
+			<h1 className="text-3xl font-bold mb-6">Family Tree</h1>
+			<CreatePersonForm />
+			<PersonList />
+		</div>
+	);
 }
 
 export default App;
