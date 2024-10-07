@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
 
-const CreatePersonForm = () => {
-	const { parent } = useParams();
+const CreatePartnerForm = () => {
+	const { partner } = useParams();
 	const [formData, setFormData] = useState({
 		firstName: '',
 		lastName: '',
 		birthDate: '',
 		gender: '',
-		parentId: parent,
+		partnerId: partner,
 	});
 
 	const handleChange = (e) => {
@@ -82,11 +82,11 @@ const CreatePersonForm = () => {
 				</select>
 			</div>
 			<div className="mb-4">
-				<label className="block text-gray-700">Parent ID</label>
+				<label className="block text-gray-700">Partner ID</label>
 				<input
 					type="number"
-					name="parentId"
-					value={formData.parentId}
+					name="partnerId"
+					value={formData.partnerId}
 					onChange={handleChange}
 					className="w-full p-2 border border-gray-300 rounded"
 					disabled
@@ -96,10 +96,10 @@ const CreatePersonForm = () => {
 				type="submit"
 				className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600"
 			>
-				Create Person
+				Create Partner
 			</button>
 		</form>
 	);
 };
 
-export default CreatePersonForm;
+export default CreatePartnerForm;

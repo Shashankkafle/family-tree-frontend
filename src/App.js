@@ -1,7 +1,8 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
 import PersonList from './components/PersonList';
-import CreatePersonForm from './components/CreatePersonForm';
+import CreateChildForm from './components/CreateChildForm';
+import CreatePartnerForm from './components/CreatePartnerForm';
 
 function App() {
 	return (
@@ -19,8 +20,12 @@ function App() {
 				<Routes>
 					<Route path="/" element={<PersonList />} />
 					<Route
-						path="/create/:parent"
-						element={<CreatePersonForm />}
+						path="/create-child/:parent"
+						element={<CreateChildForm />}
+					/>
+					<Route
+						path="/create-partner/:partner"
+						element={<CreatePartnerForm />}
 					/>
 				</Routes>
 			</div>
