@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
+import { useParams } from 'react-router-dom';
 
 const CreatePersonForm = () => {
+	const { parent } = useParams();
 	const [formData, setFormData] = useState({
 		firstName: '',
 		lastName: '',
 		birthDate: '',
 		gender: '',
-		fatherId: '',
-		motherId: '',
+		parentId: parent,
 	});
 
 	const handleChange = (e) => {
@@ -16,6 +17,7 @@ const CreatePersonForm = () => {
 
 	const handleSubmit = (e) => {
 		e.preventDefault();
+		console.log('formdata', formData);
 		fetch(process.env.REACT_APP_API_URL + '/person', {
 			method: 'POST',
 			headers: {
@@ -80,23 +82,14 @@ const CreatePersonForm = () => {
 				</select>
 			</div>
 			<div className="mb-4">
-				<label className="block text-gray-700">Father ID</label>
+				<label className="block text-gray-700">Parent ID</label>
 				<input
 					type="number"
-					name="fatherId"
-					value={formData.fatherId}
+					name="parentId"
+					value={formData.parentId}
 					onChange={handleChange}
 					className="w-full p-2 border border-gray-300 rounded"
-				/>
-			</div>
-			<div className="mb-4">
-				<label className="block text-gray-700">Mother ID</label>
-				<input
-					type="number"
-					name="motherId"
-					value={formData.motherId}
-					onChange={handleChange}
-					className="w-full p-2 border border-gray-300 rounded"
+					disabled
 				/>
 			</div>
 			<button
