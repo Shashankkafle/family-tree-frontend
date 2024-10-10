@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import PersonCard from './PersonCard';
 import axios from 'axios';
+import Example from './Dendrogram';
 
 const PersonList = () => {
 	const [people, setPeople] = useState([]);
 	async function fetchAllPerson() {
 		const list = await axios.get(process.env.REACT_APP_API_URL + '/person');
+		console.log('list', list.data);
 		setPeople(list.data);
 	}
 
