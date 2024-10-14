@@ -17,15 +17,21 @@ const PersonCard = ({ person }) => {
 			<p className="text-gray-600">
 				Born: {new Date(person.birthDate).toLocaleDateString()}
 			</p>
-			<p className="text-gray-600">Gender: {person.gender}</p>
+			{/* <p className="text-gray-600">Gender: {person.gender}</p>
 			{person.Father && (
 				<p className="text-gray-600">
 					Father: {person.Father.firstName} {person.Father.lastName}
 				</p>
-			)}
-			{person.Mother && (
+			)} */}
+			{/* {person.Mother && (
 				<p className="text-gray-600">
 					Mother: {person.Mother.firstName} {person.Mother.lastName}
+				</p>
+			)} */}
+			<p className="text-gray-600">Gender: {person.gender}</p>
+			{person.partnerFirstName && (
+				<p className="text-gray-600">
+					Partner: {person.partnerFirstName} {person.partnerFirstName}
 				</p>
 			)}
 			<button

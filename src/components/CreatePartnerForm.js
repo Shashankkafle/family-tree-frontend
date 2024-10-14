@@ -18,7 +18,7 @@ const CreatePartnerForm = () => {
 	const handleSubmit = (e) => {
 		e.preventDefault();
 		console.log('formdata', formData);
-		fetch(process.env.REACT_APP_API_URL + '/person', {
+		fetch(process.env.REACT_APP_API_URL + '/person/partner', {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',
