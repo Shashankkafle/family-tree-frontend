@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
 import PersonList from './components/PersonList';
 import CreateChildForm from './components/CreateChildForm';
 import CreatePartnerForm from './components/CreatePartnerForm';
+import EditPersonForm from './components/EditPersonForm';
 
 function App() {
 	return (
@@ -22,6 +23,10 @@ function App() {
 					<Route
 						path="/create-child/:parent"
 						element={<CreateChildForm />}
+					/>
+					<Route
+						path="/edit-person/:id"
+						element={<EditPersonForm />}
 					/>
 					<Route
 						path="/create-partner/:partner"
