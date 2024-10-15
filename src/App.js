@@ -4,7 +4,8 @@ import PersonList from './components/PersonList';
 import CreateChildForm from './components/CreateChildForm';
 import CreatePartnerForm from './components/CreatePartnerForm';
 import EditPersonForm from './components/EditPersonForm';
-
+import Modal from 'react-modal';
+Modal.setAppElement(document.getElementById('modal'));
 function App() {
 	return (
 		<Router>
