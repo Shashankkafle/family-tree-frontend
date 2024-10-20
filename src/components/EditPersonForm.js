@@ -9,35 +9,66 @@ const CreateChildForm = () => {
 		lastName: '',
 		birthDate: '',
 		gender: '',
-		id: '',
+		profession: '',
+		email: '',
+		permanentAdress: '',
+		currentAdress: '',
+		deathDate: '',
+		image: null, 
 	});
+
+	const handleFileChange = (e) => {
+		setFormData({ ...formData, image: e.target.files[0] });
+	};
+
 	async function fetchPersonDetails() {
 		const person = await axios.get(
 			process.env.REACT_APP_API_URL + '/person/' + id
 		);
 		setFormData(person.data);
 	}
+
 	useEffect(() => {
 		fetchPersonDetails();
 	}, []);
+
 	const handleChange = (e) => {
 		setFormData({ ...formData, [e.target.name]: e.target.value });
 	};
 
 	const handleSubmit = (e) => {
 		e.preventDefault();
-		fetch(process.env.REACT_APP_API_URL + '/person/' + id, {
-			method: 'PUT',
-			headers: {
-				'Content-Type': 'application/json',
-			},
-			body: JSON.stringify(formData),
-		})
-			.then((response) => response.json())
-			.then((data) => {
-				console.log('Person created:', data);
+
+		const data = new FormData(); // Create FormData object
+		data.append('firstName', formData.firstName);
+		data.append('lastName', formData.lastName);
+		data.append('birthDate', formData.birthDate);
+		data.append('gender', formData.gender);
+		data.append('profession', formData.profession);
+		data.append('email', formData.email);
+		data.append('permanentAdress', formData.permanentAdress);
+		data.append('currentAdress', formData.currentAdress);
+
+		if (formData.deathDate) {
+			data.append('deathDate', formData.deathDate);
+		}
+
+		data.append('parentId', formData.parentId);
+
+		if (formData.image) {
+			data.append('image', formData.image);
+		}
+
+		axios
+			.put(process.env.REACT_APP_API_URL + '/person/' + id, data, {
+				headers: {
+					'Content-Type': 'multipart/form-data', // Set the content type
+				},
 			})
-			.catch((error) => console.error('Error creating person:', error));
+			.then((response) => {
+				console.log('Person updated:', response.data);
+			})
+			.catch((error) => console.error('Error updating person:', error));
 	};
 
 	return (
@@ -45,7 +76,7 @@ const CreateChildForm = () => {
 			onSubmit={handleSubmit}
 			className="bg-white p-6 rounded-lg shadow-lg"
 		>
-			<h2 className="text-2xl font-bold mb-4">Add New Person</h2>
+			<h2 className="text-2xl font-bold mb-4">Update Person</h2>
 			<div className="mb-4">
 				<label className="block text-gray-700">First Name</label>
 				<input
@@ -90,6 +121,58 @@ const CreateChildForm = () => {
 				</select>
 			</div>
 			<div className="mb-4">
+				<label className="block text-gray-700">Profession</label>
+				<input
+					type="text"
+					name="profession"
+					value={formData.profession}
+					onChange={handleChange}
+					className="w-full p-2 border border-gray-300 rounded"
+				/>
+			</div>
+			<div className="mb-4">
+				<label className="block text-gray-700">Email</label>
+				<input
+					type="text"
+					name="email"
+					value={formData.email}
+					onChange={handleChange}
+					className="w-full p-2 border border-gray-300 rounded"
+				/>
+			</div>
+			<div className="mb-4">
+				<label className="block text-gray-700">Permanent Address</label>
+				<input
+					type="text"
+					name="permanentAdress"
+					value={formData.permanentAdress}
+					onChange={handleChange}
+					className="w-full p-2 border border-gray-300 rounded"
+				/>
+			</div>
+			<div className="mb-4">
+				<label className="block text-gray-700">Current Address</label>
+				<input
+					type="text"
+					name="currentAdress"
+					value={formData.currentAdress}
+					onChange={handleChange}
+					className="w-full p-2 border border-gray-300 rounded"
+				/>
+			</div>
+			<div className="mb-4">
+				<label className="block text-gray-700">
+					Date of Death (if applicable)
+				</label>
+				<input
+					type="date"
+					name="deathDate"
+					value={formData.deathDate}
+					onChange={handleChange}
+					className="w-full p-2 border border-gray-300 rounded"
+				/>
+			</div>
+			<div className="mb-4">
 				<label className="block text-gray-700">Parent ID</label>
 				<input
 					type="number"
@@ -100,11 +183,20 @@ const CreateChildForm = () => {
 					disabled
 				/>
 			</div>
+			<div className="mb-4">
+				<label className="block text-gray-700">Image:</label>
+				<input
+					type="file"
+					name="image"
+					onChange={handleFileChange}
+					className="w-full p-2 border border-gray-300 rounded"
+				/>
+			</div>
 			<button
 				type="submit"
 				className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600"
 			>
-				Edit Person
+				Update Child
 			</button>
 		</form>
 	);

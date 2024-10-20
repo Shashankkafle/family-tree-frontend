@@ -5,8 +5,16 @@ import axios from 'axios';
 const PersonList = () => {
 	const [people, setPeople] = useState([]);
 	async function fetchAllPerson() {
-		const list = await axios.get(process.env.REACT_APP_API_URL + '/person');
-		setPeople(list.data);
+		try {
+			const list = await axios.get(
+				process.env.REACT_APP_API_URL + '/person',
+				{ timeout: 50000 }
+			);
+			setPeople(list.data);
+		} catch (e) {
+			console.log('err', e);
+		}
+
 	}
 
 	useEffect(() => {
