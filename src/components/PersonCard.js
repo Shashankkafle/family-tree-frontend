@@ -24,7 +24,6 @@ const PersonCard = ({ person }) => {
 	};
 
 	const handleDeletePerson = async () => {
-		console.log('deleting', person);
 		await axios.delete(
 			process.env.REACT_APP_API_URL + '/person/' + person.id
 		);

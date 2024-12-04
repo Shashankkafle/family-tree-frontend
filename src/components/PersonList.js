@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import PersonCard from './PersonCard';
 import axios from 'axios';
 import Loading from './Loading';
+import { toast } from 'react-toastify';
 
 const PersonList = () => {
 	const [people, setPeople] = useState([]);
@@ -9,10 +10,6 @@ const PersonList = () => {
 
 	async function fetchAllPerson() {
 		try {
-			console.log(
-				'process.env.REACT_APP_API_URL',
-				process.env.REACT_APP_API_URL
-			);
 			const list = await axios.get(
 				process.env.REACT_APP_API_URL + '/person',
 				{ timeout: 50000 }

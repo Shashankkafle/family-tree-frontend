@@ -1,9 +1,11 @@
+import axios from 'axios';
 import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 const CreateChildForm = () => {
-  const { parent } = useParams();
-  const [formData, setFormData] = useState({
+	const { parent } = useParams();
+	const [formData, setFormData] = useState({
 		firstName: '',
 		lastName: '',
 		birthDate: '',
@@ -15,17 +17,37 @@ const CreateChildForm = () => {
 		deathDate: '',
 		image: null,
 		parentId: parent,
-  });
+	});
 
-  const handleChange = (e) => {
+	const handleChange = (e) => {
 		setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
+	};
 
-  const handleFileChange = (e) => {
+	const handleFileChange = (e) => {
 		setFormData({ ...formData, image: e.target.files[0] });
-  };
+	};
 
-  const handleSubmit = (e) => {
+	const createChild = async (data) => {
+		try {
+			const response = await axios.post(
+				`${process.env.REACT_APP_API_URL}/person/child`,
+				data
+			);
+
+			if (response.status !== 201) {
+				toast.error(`Error creating person: ${response.data?.error}`);
+			} else {
+				toast.success('Child created');
+			}
+		} catch (error) {
+			toast.error(
+				`Error creating person: ${
+					error?.response?.data?.message || error.message
+				}`
+			);
+		}
+	};
+	const handleSubmit = (e) => {
 		e.preventDefault();
 
 		const data = new FormData();
@@ -38,7 +60,6 @@ const CreateChildForm = () => {
 		data.append('permanentAdress', formData.permanentAdress);
 		data.append('currentAdress', formData.currentAdress);
 		data.append('parentId', formData.parentId);
-		console.log(formData.deathDate);
 		if (formData.deathDate) {
 			data.append('deathDate', formData.deathDate);
 		}
@@ -46,18 +67,10 @@ const CreateChildForm = () => {
 			data.append('image', formData.image);
 		}
 
-		fetch(process.env.REACT_APP_API_URL + '/person/child', {
-			method: 'POST',
-			body: data,
-		})
-			.then((response) => response.json())
-			.then((data) => {
-				console.log('Person created:', data);
-			})
-			.catch((error) => console.error('Error creating person:', error));
-  };
+		createChild(data);
+	};
 
-  return (
+	return (
 		<form
 			onSubmit={handleSubmit}
 			className="bg-white p-6 rounded-lg shadow-lg"
@@ -197,7 +210,7 @@ const CreateChildForm = () => {
 				Create Child
 			</button>
 		</form>
-  );
+	);
 };
 
 export default CreateChildForm;

@@ -1,9 +1,11 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
-const CreateChildForm = () => {
+const EditPersonForm = () => {
 	const { id } = useParams();
+	const navigate = useNavigate(); // Initialize the navigate function
 	const [formData, setFormData] = useState({
 		firstName: '',
 		lastName: '',
@@ -14,32 +16,67 @@ const CreateChildForm = () => {
 		permanentAdress: '',
 		currentAdress: '',
 		deathDate: '',
-		image: null, 
+		image: null,
+		parentId: '',
 	});
 
-	const handleFileChange = (e) => {
-		setFormData({ ...formData, image: e.target.files[0] });
-	};
-
-	async function fetchPersonDetails() {
-		const person = await axios.get(
-			process.env.REACT_APP_API_URL + '/person/' + id
-		);
-		setFormData(person.data);
-	}
-
+	// Fetch the person details from the server
 	useEffect(() => {
+		const fetchPersonDetails = async () => {
+			try {
+				const response = await axios.get(
+					`${process.env.REACT_APP_API_URL}/person/${id}`
+				);
+				setFormData(response.data);
+			} catch (error) {
+				toast.error('Error fetching person details');
+			}
+		};
+
 		fetchPersonDetails();
-	}, []);
+	}, [id]);
 
 	const handleChange = (e) => {
 		setFormData({ ...formData, [e.target.name]: e.target.value });
 	};
 
+	const handleFileChange = (e) => {
+		setFormData({ ...formData, image: e.target.files[0] });
+	};
+
+	// Function to update the person data
+	const updatePerson = async (data) => {
+		try {
+			const response = await axios.put(
+				`${process.env.REACT_APP_API_URL}/person/${id}`,
+				data,
+				{
+					headers: {
+						'Content-Type': 'multipart/form-data',
+					},
+				}
+			);
+
+			if (response.status === 200) {
+				toast.success('Person updated successfully');
+				navigate('/'); // Navigate to the home page on success
+			} else {
+				toast.error(`Error updating person: ${response.data?.error}`);
+			}
+		} catch (error) {
+			toast.error(
+				`Error updating person: ${
+					error?.response?.data?.message || error.message
+				}`
+			);
+		}
+	};
+
+	// Handle the form submission
 	const handleSubmit = (e) => {
 		e.preventDefault();
 
-		const data = new FormData(); // Create FormData object
+		const data = new FormData();
 		data.append('firstName', formData.firstName);
 		data.append('lastName', formData.lastName);
 		data.append('birthDate', formData.birthDate);
@@ -48,27 +85,18 @@ const CreateChildForm = () => {
 		data.append('email', formData.email);
 		data.append('permanentAdress', formData.permanentAdress);
 		data.append('currentAdress', formData.currentAdress);
+		data.append('parentId', formData.parentId);
 
 		if (formData.deathDate) {
 			data.append('deathDate', formData.deathDate);
 		}
 
-		data.append('parentId', formData.parentId);
-
 		if (formData.image) {
 			data.append('image', formData.image);
 		}
 
-		axios
-			.put(process.env.REACT_APP_API_URL + '/person/' + id, data, {
-				headers: {
-					'Content-Type': 'multipart/form-data', // Set the content type
-				},
-			})
-			.then((response) => {
-				console.log('Person updated:', response.data);
-			})
-			.catch((error) => console.error('Error updating person:', error));
+		// Call the updatePerson function to send the data
+		updatePerson(data);
 	};
 
 	return (
@@ -77,6 +105,8 @@ const CreateChildForm = () => {
 			className="bg-white p-6 rounded-lg shadow-lg"
 		>
 			<h2 className="text-2xl font-bold mb-4">Update Person</h2>
+
+			{/* First Name Input */}
 			<div className="mb-4">
 				<label className="block text-gray-700">First Name</label>
 				<input
@@ -87,6 +117,8 @@ const CreateChildForm = () => {
 					className="w-full p-2 border border-gray-300 rounded"
 				/>
 			</div>
+
+			{/* Last Name Input */}
 			<div className="mb-4">
 				<label className="block text-gray-700">Last Name</label>
 				<input
@@ -97,6 +129,8 @@ const CreateChildForm = () => {
 					className="w-full p-2 border border-gray-300 rounded"
 				/>
 			</div>
+
+			{/* Birth Date Input */}
 			<div className="mb-4">
 				<label className="block text-gray-700">Birth Date</label>
 				<input
@@ -107,6 +141,8 @@ const CreateChildForm = () => {
 					className="w-full p-2 border border-gray-300 rounded"
 				/>
 			</div>
+
+			{/* Gender Select */}
 			<div className="mb-4">
 				<label className="block text-gray-700">Gender</label>
 				<select
@@ -120,6 +156,8 @@ const CreateChildForm = () => {
 					<option value="female">Female</option>
 				</select>
 			</div>
+
+			{/* Profession Input */}
 			<div className="mb-4">
 				<label className="block text-gray-700">Profession</label>
 				<input
@@ -130,16 +168,20 @@ const CreateChildForm = () => {
 					className="w-full p-2 border border-gray-300 rounded"
 				/>
 			</div>
+
+			{/* Email Input */}
 			<div className="mb-4">
 				<label className="block text-gray-700">Email</label>
 				<input
-					type="text"
+					type="email"
 					name="email"
 					value={formData.email}
 					onChange={handleChange}
 					className="w-full p-2 border border-gray-300 rounded"
 				/>
 			</div>
+
+			{/* Permanent Address Input */}
 			<div className="mb-4">
 				<label className="block text-gray-700">Permanent Address</label>
 				<input
@@ -150,6 +192,8 @@ const CreateChildForm = () => {
 					className="w-full p-2 border border-gray-300 rounded"
 				/>
 			</div>
+
+			{/* Current Address Input */}
 			<div className="mb-4">
 				<label className="block text-gray-700">Current Address</label>
 				<input
@@ -160,6 +204,8 @@ const CreateChildForm = () => {
 					className="w-full p-2 border border-gray-300 rounded"
 				/>
 			</div>
+
+			{/* Date of Death Input */}
 			<div className="mb-4">
 				<label className="block text-gray-700">
 					Date of Death (if applicable)
@@ -172,6 +218,8 @@ const CreateChildForm = () => {
 					className="w-full p-2 border border-gray-300 rounded"
 				/>
 			</div>
+
+			{/* Parent ID Input */}
 			<div className="mb-4">
 				<label className="block text-gray-700">Parent ID</label>
 				<input
@@ -183,8 +231,10 @@ const CreateChildForm = () => {
 					disabled
 				/>
 			</div>
+
+			{/* Image File Input */}
 			<div className="mb-4">
-				<label className="block text-gray-700">Image:</label>
+				<label className="block text-gray-700">Image</label>
 				<input
 					type="file"
 					name="image"
@@ -192,14 +242,16 @@ const CreateChildForm = () => {
 					className="w-full p-2 border border-gray-300 rounded"
 				/>
 			</div>
+
+			{/* Submit Button */}
 			<button
 				type="submit"
 				className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600"
 			>
-				Update Child
+				Update Person
 			</button>
 		</form>
 	);
 };
 
-export default CreateChildForm;
+export default EditPersonForm;

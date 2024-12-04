@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 const CreatePartnerForm = () => {
 	const { partner } = useParams();
@@ -55,9 +56,11 @@ const CreatePartnerForm = () => {
 		})
 			.then((response) => response.json())
 			.then((data) => {
-				console.log('Person created:', data);
+				toast.message('Person created successfully');
 			})
-			.catch((error) => console.error('Error creating person:', error));
+			.catch((error) =>
+				console.error('Error creating person:' + error?.message)
+			);
 	};
 
 	return (

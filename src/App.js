@@ -1,5 +1,10 @@
 import React from 'react';
-import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
+import {
+	BrowserRouter as Router,
+	Route,
+	Routes,
+	useNavigate,
+} from 'react-router-dom';
 import { ToastContainer, Bounce } from 'react-toastify';
 import PersonList from './components/PersonList';
 import CreateChildForm from './components/CreateChildForm';
@@ -10,11 +15,26 @@ import 'react-toastify/dist/ReactToastify.css';
 
 Modal.setAppElement(document.getElementById('modal'));
 
+// BackButton Component
+const BackButton = () => {
+	const navigate = useNavigate();
+	return (
+		<button
+			onClick={() => navigate(-1)} // Go back to the previous page
+			className="flex items-center text-blue-500 font-medium hover:text-blue-700"
+		>
+			<span className="mr-2">&larr;</span> {/* Unicode for Left Arrow */}
+			Back
+		</button>
+	);
+};
+
 function App() {
 	return (
 		<Router>
 			<div className="container mx-auto p-6">
 				<h1 className="text-3xl font-bold mb-6">Family Tree</h1>
+				<BackButton /> {/* Add the Back button */}
 				<Routes>
 					<Route path="/" element={<PersonList />} />
 					<Route
