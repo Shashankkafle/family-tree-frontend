@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
 import PersonList from './components/PersonList';
 import CreateChildForm from './components/CreateChildForm';
 import CreatePartnerForm from './components/CreatePartnerForm';
+import FamilyTree from './components/Dendrogram';
 
 function App() {
 	return (
@@ -13,12 +14,16 @@ function App() {
 					<Link to="/" className="mr-4">
 						Person List
 					</Link>
-					<Link to="/create" className="mr-4">
-						Create Person
+					<Link to="/tree" className="mr-4">
+						Person Tree
 					</Link>
 				</nav>
 				<Routes>
 					<Route path="/" element={<PersonList />} />
+					<Route
+						path="/tree/"
+						element={<FamilyTree />}
+					/>
 					<Route
 						path="/create-child/:parent"
 						element={<CreateChildForm />}

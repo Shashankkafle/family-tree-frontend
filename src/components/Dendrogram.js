@@ -11,7 +11,6 @@ export const green = '#79d259';
 const aqua = '#37ac8c';
 const merlinsbeard = '#f7f7f3';
 export const background = '#306c90';
-const person = { id: '123', firstName: 'shashank', lastName: 'kafle' };
 const clusterData = {
 	name: '$',
 	children: [
@@ -45,9 +44,11 @@ const clusterData = {
 	],
 };
 
+
+
 function RootNode({ node }) {
-	const width = 800;
-	const height = 400;
+	const width = 50;
+	const height = 50;
 	const centerX = -width / 2;
 	const centerY = -height / 2;
 
@@ -114,15 +115,17 @@ function Node({ node }) {
 	);
 }
 
-const defaultMargin = { top: 40, left: 0, right: 0, bottom: 40 };
+const defaultMargin = { top: 0, left: 0, right: 0, bottom: 0 };
 
-export default function Example({ width, height, margin = defaultMargin }) {
+export default function FamilyTree({  margin = defaultMargin }) {
+	// Inside App component
+	const [width, height] = useWindowSize();
 	const data = useMemo(() => hierarchy(clusterData), []);
 	const xMax = width - margin.left - margin.right;
 	const yMax = height - margin.top - margin.bottom;
 
 	return width < 10 ? null : (
-		<svg width={width} height={height}>
+		<svg width={width-100} height={height-100}>
 			<LinearGradient id="top" from={green} to={aqua} />
 			<rect width={width} height={height} rx={14} fill={background} />
 			<Cluster root={data} size={[xMax, yMax]}>

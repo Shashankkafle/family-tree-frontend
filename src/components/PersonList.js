@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import PersonCard from './PersonCard';
 import axios from 'axios';
-import Example from './Dendrogram';
 
 const PersonList = () => {
 	const [people, setPeople] = useState([]);
