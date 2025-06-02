@@ -1,5 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { Group } from '@visx/group';
+import { LinePath } from '@visx/shape';
+
 import { Cluster, hierarchy } from '@visx/hierarchy';
 import { LinkVertical } from '@visx/shape';
 import { LinearGradient } from '@visx/gradient';
@@ -186,7 +188,8 @@ export default function FamilyTree({  margin = defaultMargin }) {
     //     return () => window.removeEventListener('resize', handleResize);
     // }, []);
 
-	const data = useMemo(() => hierarchy(clusterData), []);
+	const data = {"nodes":[{"x":100.5,"y":151,"data":{"id":"child1","parentIds":["p1","p2"]}},{"x":151,"y":50,"data":{"id":"p2"}},{"x":201.5,"y":151,"data":{"id":"child2","parentIds":["p2","p3"]}},{"x":252,"y":50,"data":{"id":"p3"}},{"x":50,"y":50,"data":{"id":"p1"}}],"links":[{"source":1,"target":0,"points":[[151,50],[100.5,151]]},{"source":1,"target":2,"points":[[151,50],[201.5,151]]},{"source":3,"target":2,"points":[[252,50],[201.5,151]]},{"source":4,"target":0,"points":[[50,50],[100.5,151]]}],"v":1}
+	// const data = useMemo(() => hierarchy(clusterData), []);
 	console.log("data",data)
 	const xMax = chartWidth - margin.left - margin.right;
 	const yMax = chartHeight - margin.top - margin.bottom;
@@ -202,26 +205,24 @@ export default function FamilyTree({  margin = defaultMargin }) {
 				<svg width={chartWidth} height={chartHeight}>
 					<LinearGradient id="top" from={green} to={aqua} />
 					<rect width={chartWidth} height={chartHeight} rx={14} fill={background} />
-					<Cluster root={data} size={[xMax, yMax]}>
-						{(cluster) => (
-							<Group top={margin.top} left={margin.left}>
-								{console.log("cluster.links(),cluster.descendants()",cluster.links(), cluster.descendants())}
-								{cluster.links().map((link, i) => (
-									<LinkVertical
-										key={`cluster-link-${i}`}
-										data={link}
-										stroke={merlinsbeard}
-										strokeWidth="1"
-										strokeOpacity={0.8}
-										fill="none"
-									/>
-								))}
-								{cluster.descendants().map((node, i) => (
-									<Node key={`cluster-node-${i}`} node={node} />
-								))}
-							</Group>
-						)}
-					</Cluster>
+					<Group top={20} left={20}>
+  {data.links.map((link, i) => (
+    <LinePath
+      key={`link-${i}`}
+      data={link.points}
+      x={d => d[0]}
+      y={d => d[1]}
+      stroke="#ccc"
+      strokeWidth={1.5}
+    />
+  ))}
+  {data.nodes.map((node, i) => (
+    <Group key={`node-${i}`} top={node.y} left={node.x}>
+      <circle r={20} fill="lightblue" />
+      <text dy=".3em" textAnchor="middle">{node.data.id}</text>
+    </Group>
+  ))}
+</Group>
 				</svg>
 			</div>
 		)
