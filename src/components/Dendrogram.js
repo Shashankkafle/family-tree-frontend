@@ -1,161 +1,210 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { Group } from '@visx/group';
 import { LinePath } from '@visx/shape';
-import { graphStratify, sugiyama, layeringSimplex,layeringLongestPath, decrossTwoLayer, coordCenter } from 'd3-dag';
+import {
+  graphStratify,
+  sugiyama,
+  layeringSimplex,
+  decrossOpt,
+  coordCenter
+} from 'd3-dag';
+import { useParentSize } from '@visx/responsive';
 import axios from 'axios';
 
-function Node({ node }) {
+function Node({ node, width = 80, height = 100 }) {
+	const person = node.data.data;
+	const imageUrl = person.imageUrl || 'https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcQ54FddBETZ5zkPWqjUwTUf7Er18LgEgqiLD5u9WMsrujZeMXbd7KsrF1GT6HLuhtWS8RQ713NF-zLaWsBETWokl0uwAzdFez4CdzC_NS4'; // fallback
+  
+	const imageHeight = height * 0.7;
+	const textHeight = height * 0.3;
+  
 	return (
-		<Group top={node.y} left={node.x}>
-
-				<circle
-					r={12}
-					fill='#306c90'
-					onClick={() => {
-						alert(`clicked: ${JSON.stringify(node.data.data.firstName)}`);
-					}}
-				/>
-
-			<text
-				dy=".33em"
-				fontSize={9}
-				fontFamily="Arial"
-				textAnchor="middle"
-				style={{ pointerEvents: 'none' }}
+	  <Group top={node.y} left={node.x}>
+		{/* Center the node card */}
+		<foreignObject x={-width / 2} y={-height / 2} width={width} height={height}>
+		  <div
+			xmlns="http://www.w3.org/1999/xhtml"
+			style={{
+			  width: '100%',
+			  height: '100%',
+			  border: '1px solid #ccc',
+			  borderRadius: 8,
+			  background: 'white',
+			  overflow: 'hidden',
+			  display: 'flex',
+			  flexDirection: 'column',
+			  alignItems: 'center',
+			  textAlign: 'center',
+			  fontFamily: 'Arial'
+			}}
+		  >
+			<img
+			  src={imageUrl}
+			  alt={person.firstName}
+			  style={{
+				width: '100%',
+				height: imageHeight,
+				objectFit: 'cover'
+			  }}
+			/>
+			<div
+			  style={{
+				padding: '2px 4px',
+				fontSize: 10,
+				height: textHeight,
+				display: 'flex',
+				alignItems: 'center',
+				justifyContent: 'center',
+				background: '#f5f5f5',
+				width: '100%'
+			  }}
 			>
-				{node.data.data.id}
-			</text>
-		</Group>
+			  {person.firstName}
+			</div>
+		  </div>
+		</foreignObject>
+	  </Group>
 	);
-}
+  }
 
-const defaultMargin = { top: 20, left: 20, right: 20, bottom: 20 };
+export default function FamilyTree() {
+	
+  const [people, setPeople] = useState([]);
+  const { parentRef, width = 800, height = 600 } = useParentSize({ debounceTime: 150 });
 
-
-export default function FamilyTree({  margin = defaultMargin }) {
-	const [people, setPeople] = useState([]);
-	async function fetchAllPerson() {
-		const list = await axios.get(process.env.REACT_APP_API_URL + '/person');
-		setPeople(list.data);
-	}
-
-	useEffect(() => {
-		fetchAllPerson();
-	}, []);
+  useEffect(() => {
+    async function fetchAllPerson() {
+      const list = await axios.get(process.env.REACT_APP_API_URL + '/person');
+      setPeople(list.data);
+    }
+    fetchAllPerson();
+  }, []);
 
   const dag = useMemo(() => {
-    if (!people) return null;
-	//Flatten data into a map (id → person)
-	const nodeMap = new Map();
-	for (const person of people) {
-		nodeMap.set(person.id, person);
-	}
-	function getPartnerParents(person){
-		const parents = person.partners?.flatMap((p)=>{
-			const partner = nodeMap.get(p.id);
-			return partner.parents.map(p=> String(p.id));
-		})
-		return parents
-	}
-	//Convert to required format: [{ id:int, parentIds:int[] }]
-	const formatted = [];
-	for (const person of nodeMap.values()) {
-		const formattedValue = {
-			data:{...person},
-			id: String(person.id),
-			parentIds: person.parents.length ? person.parents?.flatMap(p => String(p.id)) : getPartnerParents(person),
-			partners: person.partners?.map(p => String(p.id)) || [],
-		}
-		formatted.push(formattedValue);
+    if (!people.length) return null;
 
-	}
-	//Build DAG(Directed Acyclic Graph) from formatted structure(this gives us the position of each node)
-	const dag = graphStratify()(formatted);
+    const nodeMap = new Map(people.map(p => [p.id, p]));
 
-	//Apply Sugiyama layout
-	const layout = sugiyama()
-	.layering(layeringSimplex())
-	.decross(decrossTwoLayer())
-	.coord(coordCenter())
-	.nodeSize(() => [100, 100]);
+    function getPartnerParents(person) {
+      const parents = person.partners?.flatMap(partner =>
+        nodeMap.get(partner.id)?.parents.map(p => String(p.id))
+      );
+      return parents || [];
+    }
 
-	layout(dag)
-	// 🔍 Build a lookup map from node id to DAG node
-	const idToNode = {};
-	const nodes = [...dag.nodes()]
-	for (const node of nodes) {
-		idToNode[node.data.id] = node;
-	}
-	const partnerLinks = [];
-	const links = [];
-	for (const person of nodeMap.values()) {
-	  if (person.partners) {
-		for (const partner of person.partners) {
-		  const sourceId = String(person.id);
-		  const targetId = String(partner.id);
-  
+    const formatted = people.map(person => ({
+      data: { ...person },
+      id: String(person.id),
+      parentIds: person.parents.length
+        ? person.parents.map(p => String(p.id))
+        : getPartnerParents(person),
+      partners: person.partners?.map(p => String(p.id)) || []
+    }));
 
-			partnerLinks.push({
-			  source: idToNode[sourceId],
-			  target: idToNode[targetId],
-			  type: 'partner',
-			});
-		  
-		}
-	  }
-	}
-	return {
-		nodes,
-		links: [...dag.links()],
-		partnerLinks
-	  }
+    const dag = graphStratify()(formatted);
+
+    const layout = sugiyama()
+      .layering(layeringSimplex())
+      .decross(decrossOpt())
+      .coord(coordCenter())
+      .nodeSize(() => [200, 200]);
+
+    layout(dag);
+
+    const idToNode = {};
+    const nodes = [...dag.nodes()];
+    for (const node of nodes) {
+      idToNode[node.data.id] = node;
+    }
+
+    const partnerLinks = [];
+    for (const person of nodeMap.values()) {
+      for (const partner of person.partners || []) {
+        partnerLinks.push({
+          source: idToNode[String(person.id)],
+          target: idToNode[String(partner.id)]
+        });
+      }
+    }
+
+    return {
+      nodes,
+      links: [...dag.links()],
+      partnerLinks
+    };
   }, [people]);
-	
-	const chartWidth = 2000;
-	const chartHeight = 1000;
 
-	return ( 
-			<div style={{
-				width: '100vw',
-				height: '100vh',
-				overflow: 'scroll',
-				background: '#306c90',
-			}}>
-				<svg width={chartWidth} height={chartHeight}>
-					<rect width={chartWidth} height={chartHeight} rx={14} fill='#306c90' />
-					<Group top={20} left={20}>
-						{dag.links.map((link, i) =>{ 
-							if(link.target.data.data.parents.length)
-								{
-									return <LinePath
-									key={`link-${i}`}
-									data={link.points}
-									x={d => d[0]}
-									y={d => d[1]}
-									stroke="#ccc"
-									strokeWidth={1.5}
-								/>
-							}
-						
-						})}
-						{dag.partnerLinks.map((link, i) => 
-						(	<LinePath
-							key={`partner-link-${i}`}
-							x={d => d.x}
-							y={d => d.y}
-							data={[link.source, link.target]}
-							stroke="blue"
-							strokeWidth={2}
-							strokeDasharray="4,2" // dashed style to distinguish from parent links
-							curve={null} // or use curveStep, curveMonotoneX, etc. for styling
-						  />)
-						)}
-						{dag.nodes.map((node, i) => (
-							<Node node={node} key={`node-${i}`} />
-						))}
-					</Group>
-				</svg>
-			</div>
-		)
-		
+  if (!dag || !width || !height) return <div ref={parentRef} style={{ width: '100%', height: '600px' }} />;
+
+  // Compute DAG bounds
+  const bounds = dag.nodes.reduce(
+    (acc, node) => {
+      acc.minX = Math.min(acc.minX, node.x);
+      acc.maxX = Math.max(acc.maxX, node.x);
+      acc.minY = Math.min(acc.minY, node.y);
+      acc.maxY = Math.max(acc.maxY, node.y);
+      return acc;
+    },
+    { minX: Infinity, maxX: -Infinity, minY: Infinity, maxY: -Infinity }
+  );
+
+  const dagWidth = bounds.maxX - bounds.minX;
+  const dagHeight = bounds.maxY - bounds.minY;
+  const padding = 40;
+
+  const scale = Math.min(
+    (width - 2 * padding) / dagWidth,
+    (height - 2 * padding) / dagHeight
+  );
+
+  const scaleX = x => (x - bounds.minX) * scale + padding;
+  const scaleY = y => (y - bounds.minY) * scale + padding;
+  const scalePoint = ([x, y]) => [scaleX(x), scaleY(y)];
+
+  return (
+    <div ref={parentRef} style={{ width: '100%', height: '100%' }}>
+      <svg width={width} height={height}>
+        <rect width={width} height={height} rx={14} fill="#306c90" />
+        <Group>
+          {dag.links.map((link, i) =>
+            link.target.data.data.parents.length ? (
+              <LinePath
+                key={`link-${i}`}
+                data={link.points.map(scalePoint)}
+                x={d => d[0]}
+                y={d => d[1]}
+                stroke="#ccc"
+                strokeWidth={1.5}
+              />
+            ) : null
+          )}
+          {dag.partnerLinks.map((link, i) => (
+            <LinePath
+              key={`partner-link-${i}`}
+              data={[
+                { x: scaleX(link.source.x), y: scaleY(link.source.y) },
+                { x: scaleX(link.target.x), y: scaleY(link.target.y) }
+              ]}
+              x={d => d.x}
+              y={d => d.y}
+              stroke="blue"
+              strokeWidth={2}
+              strokeDasharray="4,2"
+            />
+          ))}
+          {dag.nodes.map((node, i) => (
+            <Node
+              key={`node-${i}`}
+              node={{
+                ...node,
+                x: scaleX(node.x),
+                y: scaleY(node.y)
+              }}
+              radius={12 * scale}
+            />
+          ))}
+        </Group>
+      </svg>
+    </div>
+  );
 }
