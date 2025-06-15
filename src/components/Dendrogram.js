@@ -12,7 +12,7 @@ function Node({ node }) {
 					r={12}
 					fill='#306c90'
 					onClick={() => {
-						alert(`clicked: ${JSON.stringify(node.data.data.id)}`);
+						alert(`clicked: ${JSON.stringify(node.data.data.firstName)}`);
 					}}
 				/>
 
@@ -30,206 +30,13 @@ function Node({ node }) {
 }
 
 const defaultMargin = { top: 20, left: 20, right: 20, bottom: 20 };
-const people =[
-	{
-	  "id": 3,
-	  "firstName": "Alice",
-	  "lastName": "Doe",
-	  "email": "alice.johnson@example.com",
-	  "profession": "Teacher",
-	  "permanentAddress": "234 Maple St",
-	  "currentAddress": "567 Birch St",
-	  "phoneNumber": "555-555-5555",
-	  "image": null,
-	  "birthDate": "2010-10-10T00:00:00.000Z",
-	  "deathDate": null,
-	  "gender": "female",
-	  "isRoot": false,
-	  "generation": 1,
-	  "createdAt": "2025-06-03T10:51:56.511Z",
-	  "updatedAt": "2025-06-03T10:51:56.511Z",
-	  "partners": [
-		
-	  ],
-	  "parents": [
-		1,2
-	  ]
-	},
-	{
-	  "id": 5,
-	  "firstName": "Charlie",
-	  "lastName": "Brown",
-	  "email": "charlie.davis@example.com",
-	  "profession": "Musician",
-	  "permanentAddress": "456 Willow St",
-	  "currentAddress": "789 Fir St",
-	  "phoneNumber": "333-333-3333",
-	  "image": null,
-	  "birthDate": "2015-03-03T00:00:00.000Z",
-	  "deathDate": null,
-	  "gender": "male",
-	  "isRoot": false,
-	  "generation": 2,
-	  "createdAt": "2025-06-03T10:51:56.511Z",
-	  "updatedAt": "2025-06-03T10:51:56.511Z",
-	  "partners": [
-		9, 7
-	  ],
-	  "parents": [
-	   3,4
-	  ]
-	},
-	{
-	  "id": 7,
-	  "firstName": "Mary",
-	  "lastName": "Davis",
-	  "email": "mary.davis@example.com",
-	  "profession": "Composer",
-	  "permanentAddress": "456 Willow St",
-	  "currentAddress": "789 Fir St",
-	  "phoneNumber": "333-333-3633",
-	  "image": null,
-	  "birthDate": "2015-03-03T00:00:00.000Z",
-	  "deathDate": null,
-	  "gender": "male",
-	  "isRoot": false,
-	  "generation": 2,
-	  "createdAt": "2025-06-03T10:51:56.511Z",
-	  "updatedAt": "2025-06-03T10:51:56.511Z",
-	  "partners": [
-		
-	  ],
-	  "parents": [
-	   3,6
-	  ]
-	},
-	{
-	  "id": 2,
-	  "firstName": "Jane",
-	  "lastName": "Doe",
-	  "email": "jane.smith@example.com",
-	  "profession": "Doctor",
-	  "permanentAddress": "789 Oak St",
-	  "currentAddress": "101 Pine St",
-	  "phoneNumber": "987-654-3210",
-	  "image": null,
-	  "birthDate": "1985-05-05T00:00:00.000Z",
-	  "deathDate": null,
-	  "gender": "female",
-	  "isRoot": false,
-	  "generation": 0,
-	  "createdAt": "2025-06-03T10:51:56.511Z",
-	  "updatedAt": "2025-06-03T10:51:56.511Z",
-	  "partners": [
-		1
-	  ],
-	  "parents": [
-		
-	  ]
-	},
-	{
-	  "id": 6,
-	  "firstName": "Ted",
-	  "lastName": "Davis",
-	  "email": "ted.davis@example.com",
-	  "profession": "Musician",
-	  "permanentAddress": "456 Willow St",
-	  "currentAddress": "789 Fir St",
-	  "phoneNumber": "333-333-3373",
-	  "image": null,
-	  "birthDate": "2015-03-03T00:00:00.000Z",
-	  "deathDate": null,
-	  "gender": "male",
-	  "isRoot": false,
-	  "generation": 1,
-	  "createdAt": "2025-06-03T10:51:56.511Z",
-	  "updatedAt": "2025-06-03T10:51:56.511Z",
-	  "partners": [
-		3
-	  ],
-	  "parents": [
-		
-	  ]
-	},
-	{
-	  "id": 4,
-	  "firstName": "Bob",
-	  "lastName": "Brown",
-	  "email": "bob.brown@example.com",
-	  "profession": "Artist",
-	  "permanentAddress": "345 Cedar St",
-	  "currentAddress": "678 Spruce St",
-	  "phoneNumber": "444-444-4444",
-	  "image": null,
-	  "birthDate": "2012-12-12T00:00:00.000Z",
-	  "deathDate": null,
-	  "gender": "male",
-	  "isRoot": false,
-	  "generation": 1,
-	  "createdAt": "2025-06-03T10:51:56.511Z",
-	  "updatedAt": "2025-06-03T10:51:56.511Z",
-	  "partners": [
-		3
-	  ],
-	  "parents": [
-		
-	  ]
-	},
-	{
-	  "id": 1,
-	  "firstName": "John",
-	  "lastName": "Doe",
-	  "email": "john.doe@example.com",
-	  "profession": "Engineer",
-	  "permanentAddress": "123 Main St",
-	  "currentAddress": "456 Elm St",
-	  "phoneNumber": "123-456-7890",
-	  "image": null,
-	  "birthDate": "1980-01-01T00:00:00.000Z",
-	  "deathDate": null,
-	  "gender": "male",
-	  "isRoot": true,
-	  "generation": 0,
-	  "createdAt": "2025-06-03T10:51:56.511Z",
-	  "updatedAt": "2025-06-03T10:51:56.511Z",
-	  "partners": [
-		2
-	  ],
-	  "parents": [
-		
-	  ]
-	},
-	{
-	  "id": 9,
-	  "firstName": "Mariella",
-	  "lastName": "Gabriel",
-	  "email": null,
-	  "profession": null,
-	  "permanentAddress": null,
-	  "currentAddress": null,
-	  "phoneNumber": null,
-	  "image": null,
-	  "birthDate": "2015-10-13T00:00:00.000Z",
-	  "deathDate": null,
-	  "gender": "female",
-	  "isRoot": false,
-	  "generation": 3,
-	  "createdAt": "2025-06-07T00:56:23.455Z",
-	  "updatedAt": "2025-06-07T00:56:23.455Z",
-	  "partners": [
-		5
-	  ],
-	  "parents": [
-		
-	  ]
-	}
-  ]
+
 
 export default function FamilyTree({  margin = defaultMargin }) {
-	// const [people, setPeople] = useState([]);
+	const [people, setPeople] = useState([]);
 	async function fetchAllPerson() {
-		// const list = await axios.get(process.env.REACT_APP_API_URL + '/person');
-		// setPeople(list.data);
+		const list = await axios.get(process.env.REACT_APP_API_URL + '/person');
+		setPeople(list.data);
 	}
 
 	useEffect(() => {
@@ -245,8 +52,8 @@ export default function FamilyTree({  margin = defaultMargin }) {
 	}
 	function getPartnerParents(person){
 		const parents = person.partners?.flatMap((p)=>{
-			const partner = nodeMap.get(p);
-			return partner.parents.map(p=> String(p));
+			const partner = nodeMap.get(p.id);
+			return partner.parents.map(p=> String(p.id));
 		})
 		return parents
 	}
@@ -256,9 +63,8 @@ export default function FamilyTree({  margin = defaultMargin }) {
 		const formattedValue = {
 			data:{...person},
 			id: String(person.id),
-			parentIds: person.parents.length ? person.parents?.flatMap(p => String(p)) : getPartnerParents(person),
-			// isDirectChild:person.parents.length? true: false,
-			partners: person.partners?.map(p => String(p)) || [],
+			parentIds: person.parents.length ? person.parents?.flatMap(p => String(p.id)) : getPartnerParents(person),
+			partners: person.partners?.map(p => String(p.id)) || [],
 		}
 		formatted.push(formattedValue);
 
@@ -286,7 +92,7 @@ export default function FamilyTree({  margin = defaultMargin }) {
 	  if (person.partners) {
 		for (const partner of person.partners) {
 		  const sourceId = String(person.id);
-		  const targetId = String(partner);
+		  const targetId = String(partner.id);
   
 
 			partnerLinks.push({

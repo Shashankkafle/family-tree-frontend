@@ -1,14 +1,39 @@
-import React, { useState } from 'react';
+import axios from 'axios';
+import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-
+import PersonListDropdown from './PersonListDropdown';
+const TextField = ({ label, name, value, onChange }) => {
+	return (
+		<div className="mb-4" onFocus={() => console.log("Focused input", name)}>
+			<label className="block text-gray-700">{label}</label>
+			<input
+				type="text"
+				name={name}
+				value={value}
+				onChange={onChange}
+				className="w-full p-2 border border-gray-300 rounded"
+			/>
+		</div>
+	)
+}
 const CreateChildForm = () => {
 	const { parent } = useParams();
+	const [parents,setParents] = useState([]);
+	async function fetchParents() {
+		console.log('Fetching parents for:', parent);
+		const parentList = await axios.get(`${process.env.REACT_APP_API_URL}/person/partner/${parent}`);
+		console.log('Parent List:', parentList.data);
+		setParents(parentList.data);
+	}
+	useEffect(() => {
+		fetchParents();
+	}, [parent]);
 	const [formData, setFormData] = useState({
 		firstName: '',
 		lastName: '',
 		birthDate: '',
 		gender: '',
-		parentId: parent,
+		parent1Id: parent,
 	});
 
 	const handleChange = (e) => {
@@ -18,19 +43,16 @@ const CreateChildForm = () => {
 	const handleSubmit = (e) => {
 		e.preventDefault();
 		console.log('formdata', formData);
-		fetch(process.env.REACT_APP_API_URL + '/person/child', {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json',
-			},
-			body: JSON.stringify(formData),
-		})
-			.then((response) => response.json())
-			.then((data) => {
-				console.log('Person created:', data);
+	
+		axios.post(`${process.env.REACT_APP_API_URL}/person/child`, formData)
+			.then((response) => {
+				console.log('Person created:', response.data);
 			})
-			.catch((error) => console.error('Error creating person:', error));
+			.catch((error) => {
+				console.error('Error creating person:', error);
+			});
 	};
+
 
 	return (
 		<form
@@ -38,26 +60,8 @@ const CreateChildForm = () => {
 			className="bg-white p-6 rounded-lg shadow-lg"
 		>
 			<h2 className="text-2xl font-bold mb-4">Add New Person</h2>
-			<div className="mb-4">
-				<label className="block text-gray-700">First Name</label>
-				<input
-					type="text"
-					name="firstName"
-					value={formData.firstName}
-					onChange={handleChange}
-					className="w-full p-2 border border-gray-300 rounded"
-				/>
-			</div>
-			<div className="mb-4">
-				<label className="block text-gray-700">Last Name</label>
-				<input
-					type="text"
-					name="lastName"
-					value={formData.lastName}
-					onChange={handleChange}
-					className="w-full p-2 border border-gray-300 rounded"
-				/>
-			</div>
+			<TextField label="First Name" name="firstName" value={formData.firstName} onChange={handleChange} />
+			<TextField label="Last Name" name="lastName" value={formData.lastName} onChange={handleChange} />
 			<div className="mb-4">
 				<label className="block text-gray-700">Birth Date</label>
 				<input
@@ -81,17 +85,9 @@ const CreateChildForm = () => {
 					<option value="female">Female</option>
 				</select>
 			</div>
-			<div className="mb-4">
-				<label className="block text-gray-700">Parent ID</label>
-				<input
-					type="number"
-					name="parentId"
-					value={formData.parentId}
-					onChange={handleChange}
-					className="w-full p-2 border border-gray-300 rounded"
-					disabled
-				/>
-			</div>
+			<PersonListDropdown people={parents} onSelect={(selectedId) =>
+		setFormData({ ...formData, parent2Id: selectedId })
+	} />
 			<button
 				type="submit"
 				className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600"
