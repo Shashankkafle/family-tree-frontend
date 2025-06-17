@@ -19,13 +19,14 @@ const TextField = ({ label, name, value, onChange }) => {
 const CreateChildForm = () => {
 	const { parent } = useParams();
 	const [parents,setParents] = useState([]);
-	async function fetchParents() {
-		console.log('Fetching parents for:', parent);
-		const parentList = await axios.get(`${process.env.REACT_APP_API_URL}/person/partner/${parent}`);
-		console.log('Parent List:', parentList.data);
-		setParents(parentList.data);
-	}
+
 	useEffect(() => {
+		async function fetchParents() {
+			console.log('Fetching parents for:', parent);
+			const parentList = await axios.get(`${process.env.REACT_APP_API_URL}/person/partner/${parent}`);
+			console.log('Parent List:', parentList.data);
+			setParents(parentList.data);
+		}
 		fetchParents();
 	}, [parent]);
 	const [formData, setFormData] = useState({
