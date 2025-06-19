@@ -2,20 +2,8 @@ import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import PersonListDropdown from './PersonListDropdown';
-const TextField = ({ label, name, value, onChange }) => {
-	return (
-		<div className="mb-4" onFocus={() => console.log("Focused input", name)}>
-			<label className="block text-gray-700">{label}</label>
-			<input
-				type="text"
-				name={name}
-				value={value}
-				onChange={onChange}
-				className="w-full p-2 border border-gray-300 rounded"
-			/>
-		</div>
-	)
-}
+import TextField from './input/TextField';
+
 const CreateChildForm = () => {
 	const { parent } = useParams();
 	const [parents,setParents] = useState([]);
@@ -32,6 +20,9 @@ const CreateChildForm = () => {
 	const [formData, setFormData] = useState({
 		firstName: '',
 		lastName: '',
+		email: '',
+		profession: '',
+		permanentAddress: '',
 		birthDate: '',
 		gender: '',
 		parent1Id: parent,
@@ -60,32 +51,35 @@ const CreateChildForm = () => {
 			onSubmit={handleSubmit}
 			className="bg-white p-6 rounded-lg shadow-lg"
 		>
-			<h2 className="text-2xl font-bold mb-4">Add New Person</h2>
-			<TextField label="First Name" name="firstName" value={formData.firstName} onChange={handleChange} />
-			<TextField label="Last Name" name="lastName" value={formData.lastName} onChange={handleChange} />
-			<div className="mb-4">
-				<label className="block text-gray-700">Birth Date</label>
-				<input
-					type="date"
-					name="birthDate"
-					value={formData.birthDate}
-					onChange={handleChange}
-					className="w-full p-2 border border-gray-300 rounded"
-				/>
-			</div>
-			<div className="mb-4">
-				<label className="block text-gray-700">Gender</label>
-				<select
-					name="gender"
-					value={formData.gender}
-					onChange={handleChange}
-					className="w-full p-2 border border-gray-300 rounded"
-				>
-					<option value="">Select Gender</option>
-					<option value="male">Male</option>
-					<option value="female">Female</option>
-				</select>
-			</div>
+			<h2 className="text-2xl font-bold mb-4">Add New Child</h2>
+				<TextField label="First Name" name="firstName" value={formData.firstName} onChange={handleChange} />
+				<TextField label="Last Name" name="lastName" value={formData.lastName} onChange={handleChange} />
+				<TextField label="Permanent Address" name="permanentAddress" value={formData.permanentAddress} onChange={handleChange} />
+				<TextField label="Current Address" name="currentAddress" value={formData.currentAddress} onChange={handleChange} />
+				<TextField label="Email" name="email" value={formData.email} onChange={handleChange} />
+				<div className="mb-4">
+					<label className="block text-gray-700">Birth Date</label>
+					<input
+						type="date"
+						name="birthDate"
+						value={formData.birthDate}
+						onChange={handleChange}
+						className="w-full p-2 border border-gray-300 rounded"
+					/>
+				</div>
+				<div className="mb-4">
+					<label className="block text-gray-700">Gender</label>
+					<select
+						name="gender"
+						value={formData.gender}
+						onChange={handleChange}
+						className="w-full p-2 border border-gray-300 rounded"
+					>
+						<option value="">Select Gender</option>
+						<option value="male">Male</option>
+						<option value="female">Female</option>
+					</select>
+				</div>
 			<PersonListDropdown people={parents} onSelect={(selectedId) =>
 		setFormData({ ...formData, parent2Id: selectedId })
 	} />

@@ -1,11 +1,15 @@
 import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
+import TextField from './input/TextField';
 
 const CreatePartnerForm = () => {
 	const { partner } = useParams();
 	const [formData, setFormData] = useState({
 		firstName: '',
 		lastName: '',
+		email: '',
+		profession: '',
+		permanentAddress: '',
 		birthDate: '',
 		gender: '',
 		partnerId: partner,
@@ -36,50 +40,35 @@ const CreatePartnerForm = () => {
 			onSubmit={handleSubmit}
 			className="bg-white p-6 rounded-lg shadow-lg"
 		>
-			<h2 className="text-2xl font-bold mb-4">Add New Person</h2>
-			<div className="mb-4">
-				<label className="block text-gray-700">First Name</label>
-				<input
-					type="text"
-					name="firstName"
-					value={formData.firstName}
-					onChange={handleChange}
-					className="w-full p-2 border border-gray-300 rounded"
-				/>
-			</div>
-			<div className="mb-4">
-				<label className="block text-gray-700">Last Name</label>
-				<input
-					type="text"
-					name="lastName"
-					value={formData.lastName}
-					onChange={handleChange}
-					className="w-full p-2 border border-gray-300 rounded"
-				/>
-			</div>
-			<div className="mb-4">
-				<label className="block text-gray-700">Birth Date</label>
-				<input
-					type="date"
-					name="birthDate"
-					value={formData.birthDate}
-					onChange={handleChange}
-					className="w-full p-2 border border-gray-300 rounded"
-				/>
-			</div>
-			<div className="mb-4">
-				<label className="block text-gray-700">Gender</label>
-				<select
-					name="gender"
-					value={formData.gender}
-					onChange={handleChange}
-					className="w-full p-2 border border-gray-300 rounded"
-				>
-					<option value="">Select Gender</option>
-					<option value="male">Male</option>
-					<option value="female">Female</option>
-				</select>
-			</div>
+			<h2 className="text-2xl font-bold mb-4">Add New Partner</h2>
+			<TextField label="First Name" name="firstName" value={formData.firstName} onChange={handleChange} />
+				<TextField label="Last Name" name="lastName" value={formData.lastName} onChange={handleChange} />
+				<TextField label="Permanent Address" name="permanentAddress" value={formData.permanentAddress} onChange={handleChange} />
+				<TextField label="Current Address" name="currentAddress" value={formData.currentAddress} onChange={handleChange} />
+				<TextField label="Email" name="email" value={formData.email} onChange={handleChange} />
+				<div className="mb-4">
+					<label className="block text-gray-700">Birth Date</label>
+					<input
+						type="date"
+						name="birthDate"
+						value={formData.birthDate}
+						onChange={handleChange}
+						className="w-full p-2 border border-gray-300 rounded"
+					/>
+				</div>
+				<div className="mb-4">
+					<label className="block text-gray-700">Gender</label>
+					<select
+						name="gender"
+						value={formData.gender}
+						onChange={handleChange}
+						className="w-full p-2 border border-gray-300 rounded"
+					>
+						<option value="">Select Gender</option>
+						<option value="male">Male</option>
+						<option value="female">Female</option>
+					</select>
+				</div>
 			<div className="mb-4">
 				<label className="block text-gray-700">Partner ID</label>
 				<input

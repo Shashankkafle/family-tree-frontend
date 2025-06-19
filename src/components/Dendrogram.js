@@ -150,7 +150,7 @@ export default function FamilyTree() {
 
   const dagWidth = bounds.maxX - bounds.minX;
   const dagHeight = bounds.maxY - bounds.minY;
-  const padding = 40;
+  const padding = 70;
 
   const scale = Math.min(
     (width - 2 * padding) / dagWidth,
