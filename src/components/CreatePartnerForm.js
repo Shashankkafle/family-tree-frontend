@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import TextField from './input/TextField';
+import { toast } from 'react-toastify';
 
 const CreatePartnerForm = () => {
 	const { partner } = useParams();
@@ -12,13 +13,23 @@ const CreatePartnerForm = () => {
 		permanentAddress: '',
 		birthDate: '',
 		gender: '',
+		profession: '',
+		email: '',
+		permanentAddress: '',
+		currentAddress: '',
+		deathDate: '',
 		partnerId: partner,
+		image: null, // For file uploads
 	});
+
+	const handleFileChange = (e) => {
+		setFormData({ ...formData, image: e.target.files[0] });
+	};
 
 	const handleChange = (e) => {
 		setFormData({ ...formData, [e.target.name]: e.target.value });
 	};
-
+	
 	const handleSubmit = (e) => {
 		e.preventDefault();
 		fetch(process.env.REACT_APP_API_URL + '/person/partner', {
@@ -34,6 +45,7 @@ const CreatePartnerForm = () => {
 			})
 			.catch((error) => console.error('Error creating person:', error));
 	};
+
 
 	return (
 		<form
@@ -75,9 +87,17 @@ const CreatePartnerForm = () => {
 					type="number"
 					name="partnerId"
 					value={formData.partnerId}
-					onChange={handleChange}
 					className="w-full p-2 border border-gray-300 rounded"
 					disabled
+				/>
+			</div>
+			<div className="mb-4">
+				<label className="block text-gray-700">Image:</label>
+				<input
+					type="file"
+					name="image"
+					onChange={handleFileChange}
+					className="w-full p-2 border border-gray-300 rounded"
 				/>
 			</div>
 			<button

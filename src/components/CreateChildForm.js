@@ -18,25 +18,45 @@ const CreateChildForm = () => {
 		fetchParents();
 	}, [parent]);
 	const [formData, setFormData] = useState({
-		firstName: '',
-		lastName: '',
-		email: '',
-		profession: '',
-		permanentAddress: '',
-		birthDate: '',
-		gender: '',
+		firstName: null,
+		lastName: null,
+		email: null,
+		profession: null,
+		permanentAddress: null,
+		birthDate: null,
+		gender: null,
+		currentAddress: null,
+		deathDate: null,
+		image: null,
 		parent1Id: parent,
 	});
-
+	const toFormFormat = (data) => {
+		const formData = new FormData();
+		for (const key in data) {
+			if (key === 'image' && data[key]?.length) {
+				formData.append('image', data[key][0]); // First file
+			} else if (data[key] !== null && data[key] !== undefined) {
+				formData.append(key, data[key]);
+			}
+		}
+		return formData;
+	};
+	
 	const handleChange = (e) => {
 		setFormData({ ...formData, [e.target.name]: e.target.value });
 	};
 
+	const handleFileChange = (e) => {
+		console.log('File selected:', e.target.files);
+		setFormData({ ...formData, image: e.target.files });
+	};
+
 	const handleSubmit = (e) => {
 		e.preventDefault();
+		const data = toFormFormat(formData);
 		console.log('formdata', formData);
 	
-		axios.post(`${process.env.REACT_APP_API_URL}/person/child`, formData)
+		axios.post(`${process.env.REACT_APP_API_URL}/person/child`, data)
 			.then((response) => {
 				console.log('Person created:', response.data);
 			})
@@ -80,6 +100,15 @@ const CreateChildForm = () => {
 						<option value="female">Female</option>
 					</select>
 				</div>
+				<div className="mb-4">
+				<label className="block text-gray-700">Image</label>
+				<input
+					type="file"
+					name="image"
+					onChange={handleFileChange}
+					className="w-full p-2 border border-gray-300 rounded"
+				/>
+			</div>
 			<PersonListDropdown people={parents} onSelect={(selectedId) =>
 		setFormData({ ...formData, parent2Id: selectedId })
 	} />
