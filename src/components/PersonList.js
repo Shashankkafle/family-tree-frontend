@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import PersonCard from './PersonCard';
 import Loading from './Loading';
 import { toast } from 'react-toastify';
@@ -6,11 +6,6 @@ import { useFetchAllPerson } from '../hooks/apiCalls';
 
 const PersonList = () => {
 	const { people, isPeopleLoading, peopleError } = useFetchAllPerson();
-	useEffect(() => {
-		if (peopleError) {
-			toast.error("Failed to fetch people.");
-		}
-	}, [peopleError]);
 	if (isPeopleLoading) {
 		return <Loading />;
 	}

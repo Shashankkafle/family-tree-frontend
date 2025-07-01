@@ -4,7 +4,8 @@ const PersonListDropdown = ({ people, onSelect }) => {
 	const [isOpen, setIsOpen] = useState(false);
 	const [selectedPerson, setSelectedPerson] = useState(null);
 
-	const toggleDropdown = () => {
+	const toggleDropdown = (e) => {
+		e.preventDefault();
 		setIsOpen((prev) => !prev);
 	};
 

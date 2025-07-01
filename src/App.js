@@ -52,7 +52,7 @@ function App() {
 						element={<FamilyTree />}
 					/>
 					<Route
-						path="/create-child/:parent"
+						path="/create-child/:parentId"
 						element={<CreateChildForm />}
 					/>
 					<Route
