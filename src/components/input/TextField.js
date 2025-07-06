@@ -1,4 +1,4 @@
-const TextField = ({ label, name, value, onChange }) => {
+const TextField = ({ label, name, value, onChange, fieldRef }) => {
 	return (
 		<div className="mb-4">
 			<label className="block text-gray-700">{label}</label>
@@ -7,6 +7,7 @@ const TextField = ({ label, name, value, onChange }) => {
 				name={name}
 				value={value}
 				onChange={onChange}
+				ref={fieldRef}
 				className="w-full p-2 border border-gray-300 rounded"
 			/>
 		</div>
