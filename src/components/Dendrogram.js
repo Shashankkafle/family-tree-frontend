@@ -9,7 +9,8 @@ import {
   coordCenter
 } from 'd3-dag';
 import { useParentSize } from '@visx/responsive';
-import axios from 'axios';
+import { useFetchAllPerson } from '../hooks/apiCalls';
+import Loading from './Loading';
 
 function Node({ node, width = 80, height = 100 }) {
 	const person = node.data.data;
@@ -69,17 +70,8 @@ function Node({ node, width = 80, height = 100 }) {
 
 export default function FamilyTree() {
 	
-  const [people, setPeople] = useState([]);
   const { parentRef, width = 800, height = 600 } = useParentSize({ debounceTime: 150 });
-
-  useEffect(() => {
-    async function fetchAllPerson() {
-      const list = await axios.get(process.env.REACT_APP_API_URL + '/person');
-      setPeople(list.data);
-    }
-    fetchAllPerson();
-  }, []);
-
+	const { people, isPeopleLoading, peopleError } = useFetchAllPerson();
   const dag = useMemo(() => {
     if (!people.length) return null;
 
@@ -160,6 +152,10 @@ export default function FamilyTree() {
   const scaleX = x => (x - bounds.minX) * scale + padding;
   const scaleY = y => (y - bounds.minY) * scale + padding;
   const scalePoint = ([x, y]) => [scaleX(x), scaleY(y)];
+
+  if (isPeopleLoading) {
+		return <Loading />;
+	}
 
   return (
     <div ref={parentRef} style={{ width: '100%', height: '100%' }}>

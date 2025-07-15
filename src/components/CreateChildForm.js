@@ -1,34 +1,27 @@
 import axios from 'axios';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import PersonListDropdown from './PersonListDropdown';
 import TextField from './input/TextField';
+import { useFetchAllPartners } from '../hooks/apiCalls';
+import Loading from './Loading';
 
 const CreateChildForm = () => {
-	const { parent } = useParams();
-	const [parents,setParents] = useState([]);
+	const { parentId } = useParams();
 
-	useEffect(() => {
-		async function fetchParents() {
-			console.log('Fetching parents for:', parent);
-			const parentList = await axios.get(`${process.env.REACT_APP_API_URL}/person/partner/${parent}`);
-			console.log('Parent List:', parentList.data);
-			setParents(parentList.data);
-		}
-		fetchParents();
-	}, [parent]);
-	const [formData, setFormData] = useState({
-		firstName: null,
-		lastName: null,
-		email: null,
-		profession: null,
-		permanentAddress: null,
-		birthDate: null,
-		gender: null,
-		currentAddress: null,
-		deathDate: null,
-		image: null,
-		parent1Id: parent,
+
+	const { partners, isPartnerLoading, partnerError } = useFetchAllPartners(parentId);
+		const [formData, setFormData] = useState({
+		firstName: '',
+		lastName: '',
+		email: '',
+		profession: '',
+		permanentAddress: '',
+		birthDate: '',
+		gender: '',
+		currentAddress: '',
+		image: '',
+		parent1Id: parentId,
 	});
 	const toFormFormat = (data) => {
 		const formData = new FormData();
@@ -47,15 +40,12 @@ const CreateChildForm = () => {
 	};
 
 	const handleFileChange = (e) => {
-		console.log('File selected:', e.target.files);
 		setFormData({ ...formData, image: e.target.files });
 	};
 
 	const handleSubmit = (e) => {
 		e.preventDefault();
 		const data = toFormFormat(formData);
-		console.log('formdata', formData);
-	
 		axios.post(`${process.env.REACT_APP_API_URL}/person/child`, data)
 			.then((response) => {
 				console.log('Person created:', response.data);
@@ -64,8 +54,9 @@ const CreateChildForm = () => {
 				console.error('Error creating person:', error);
 			});
 	};
-
-
+	if (isPartnerLoading) {
+		return <Loading />;
+	}
 	return (
 		<form
 			onSubmit={handleSubmit}
@@ -83,6 +74,16 @@ const CreateChildForm = () => {
 						type="date"
 						name="birthDate"
 						value={formData.birthDate}
+						onChange={handleChange}
+						className="w-full p-2 border border-gray-300 rounded"
+					/>
+				</div>
+				<div className="mb-4">
+					<label className="block text-gray-700">Death Date</label>
+					<input
+						type="date"
+						name="deathDate"
+						value={formData.deathDate}
 						onChange={handleChange}
 						className="w-full p-2 border border-gray-300 rounded"
 					/>
@@ -108,10 +109,19 @@ const CreateChildForm = () => {
 					onChange={handleFileChange}
 					className="w-full p-2 border border-gray-300 rounded"
 				/>
-			</div>
-			<PersonListDropdown people={parents} onSelect={(selectedId) =>
-		setFormData({ ...formData, parent2Id: selectedId })
-	} />
+				</div>
+				<div className="mb-4">
+					{isPartnerLoading ? (
+						<Loading />
+						) : (
+						<PersonListDropdown
+							people={partners}
+							onSelect={(selectedId) =>
+							setFormData({ ...formData, parent2Id: selectedId })
+							}
+						/>
+					)}
+				</div>
 			<button
 				type="submit"
 				className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600"
