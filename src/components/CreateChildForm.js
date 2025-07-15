@@ -30,6 +30,7 @@ const CreateChildForm = () => {
 	const deathDateRef = useRef(null);
 	const birthDateRef = useRef(null);
 	const genderRef = useRef(null);
+	const parent2IdRef = useRef(null);
 
 	const toFormFormat = (data) => {
 		const formData = new FormData();
@@ -53,6 +54,11 @@ const CreateChildForm = () => {
 
 	const handleSubmit = (e) => {
 		e.preventDefault();
+		if(!formData.parent2Id){
+			toast.error('Please select a parent for the child');
+			parent2IdRef.current.focus();
+			return;
+		}
 		const validationResult = validatePersonvalues(formData);
 		if(validationResult){
 			switch (validationResult){
@@ -83,10 +89,11 @@ const CreateChildForm = () => {
 		const data = toFormFormat(formData);
 		axios.post(`${process.env.REACT_APP_API_URL}/person/child`, data)
 			.then((response) => {
-				toast.message('Child created successfully!');
+				toast.success('Child created successfully!');
 			})
 			.catch((error) => {
-				toast.error('Error creating person:', error);
+				console.log("error",error)
+				toast.error(`Error creating person:${error?.response?.data?.message||error.message}`);
 			});
 	};
 	if (isPartnerLoading) {
@@ -157,6 +164,7 @@ const CreateChildForm = () => {
 							onSelect={(selectedId) =>
 							setFormData({ ...formData, parent2Id: selectedId })
 							}
+							fieldRef={parent2IdRef}
 						/>
 					)}
 				</div>
