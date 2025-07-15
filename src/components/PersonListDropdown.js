@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-const PersonListDropdown = ({ people, onSelect }) => {
+const PersonListDropdown = ({ people, onSelect, fieldRef }) => {
 	const [isOpen, setIsOpen] = useState(false);
 	const [selectedPerson, setSelectedPerson] = useState(null);
 
@@ -20,6 +20,7 @@ const PersonListDropdown = ({ people, onSelect }) => {
 			<button
 				className="px-4 py-2 bg-white text-gray-700 border border-gray-300 rounded-md shadow-sm hover:bg-gray-100 flex items-center justify-between w-48"
 				onClick={toggleDropdown}
+				ref={fieldRef}
 			>
 				<span>
 					{selectedPerson
